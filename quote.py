@@ -43,6 +43,7 @@ async def quote_cmd(client, message):
 	Code comes from https://github.com/SamHDev/inspiro.
 	"""
 	msg = message
+	reply_to = message.message_id
 	if message.reply_to_message is not None:
 		msg = message.reply_to_message
 
