@@ -32,7 +32,7 @@ HELP = HelpCategory("QUOTE")
 INTERRUPT = False
 
 
-#@HELP.add(cmd="[<width>]", sudo=False)
+@HELP.add(sudo=False)
 @alemiBot.on_message(is_allowed & filterCommand("quote", list(alemiBot.prefixes)))
 @report_error(logger)
 @set_offline
