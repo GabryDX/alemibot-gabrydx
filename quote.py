@@ -40,6 +40,8 @@ async def quote_cmd(client, message):
 
 			# getting the quote from the data
 			quote = data[0]['quoteText']
+			if "quoteAuthor" in data[0]:
+				quote += "\n\n__" + data[0]["quoteAuthor"] + "__"
 			await edit_or_reply(msg, quote)
 		else:
 			return await edit_or_reply(message, "`[!] → ` Error while getting quote")

@@ -20,7 +20,7 @@ from alemibot.util import (
 import logging
 logger = logging.getLogger(__name__)
 
-HELP = HelpCategory("APICALLS2")
+HELP = HelpCategory("APICALLS-BIS")
 
 recognizer = sr.Recognizer()
 dictionary = PyDictionary()
