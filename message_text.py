@@ -51,7 +51,8 @@ async def transcribe2_cmd(client: alemiBot, message: Message):
 	elif message.voice or message.audio or (message.document and message.command["whatsapp"]):
 		path = await client.download_media(message)
 	else:
-		return await edit_or_reply(message, "`[!] → ` No audio given")
+		return await edit_or_reply(message, str(message.media))
+		# return await edit_or_reply(message, "`[!] → ` No audio given")
 	if message.command["whatsapp"]:
 		try:
 			sound = AudioSegment.from_file(path, codec="opus")
