@@ -7,6 +7,7 @@ from udpy import UrbanClient
 
 from pydub import AudioSegment
 import speech_recognition as sr
+from io import BytesIO
 
 from pyrogram.enums import ChatAction, ParseMode
 
@@ -28,12 +29,12 @@ UClient = UrbanClient()
 
 @HELP.add(sudo=False)
 @alemiBot.on_message(is_allowed & filterCommand(["transcribe"], options={
-	"lang": ["-l", "-lang"]
+	"lang": ["-l", "-lang"], "whatsapp": ["-w", "-whatsapp"]
 }))
 @report_error(logger)
 @set_offline
 @cancel_chat_action
-async def transcribe_cmd(client: alemiBot, message: Message):
+async def transcribe2_cmd(client: alemiBot, message: Message):
 	"""transcribes a voice message
 	Reply to a voice message to transcribe it. It uses Google Speech Recognition API.
 	It will work without a key but usage may get limited. You can try to get a free key here:
@@ -51,6 +52,11 @@ async def transcribe_cmd(client: alemiBot, message: Message):
 		path = await client.download_media(message)
 	else:
 		return await edit_or_reply(message, "`[!] → ` No audio given")
+	if message.command["whatsapp"]:
+		try:
+			sound = AudioSegment.from_file(path, codec="opus")
+		except:
+			sound = AudioSegment.from_file(path, codec="webm")
 	AudioSegment.from_ogg(path).export("data/voice.wav", format="wav")
 	os.remove(path)
 	voice = sr.AudioFile("data/voice.wav")
