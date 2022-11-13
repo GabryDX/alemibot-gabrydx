@@ -16,29 +16,6 @@ INTERRUPT = False
 
 
 @HELP.add(sudo=False)
-@alemiBot.on_message(is_allowed & filterCommand("quote_img"))
-@report_error(logger)
-@set_offline
-@cancel_chat_action
-async def quote_img_cmd(client, message):
-	"""send stupid quote image
-
-	Code comes from https://github.com/SamHDev/inspiro.
-	"""
-	msg = message
-	reply_to = message.id
-	if message.reply_to_message is not None:
-		msg = message.reply_to_message
-
-	quote = inspirobot.generate()  # Generate Image
-	# print(quote.url)  # Print the url
-	try:
-		await send_media(client, message.chat.id, quote.url, reply_to_message_id=reply_to)
-	except Exception as ex:
-		await edit_or_reply(message, "`[!] → ` " + str(ex))
-
-
-@HELP.add(sudo=False)
 @alemiBot.on_message(is_allowed & filterCommand("quote"))
 @report_error(logger)
 @set_offline
@@ -68,3 +45,26 @@ async def quote_cmd(client, message):
 			return await edit_or_reply(message, "`[!] → ` Error while getting quote")
 	except:
 		return await edit_or_reply(message, "`[!] → ` Something went wrong! Try Again!")
+
+
+@HELP.add(sudo=False)
+@alemiBot.on_message(is_allowed & filterCommand("quote_img"))
+@report_error(logger)
+@set_offline
+@cancel_chat_action
+async def quote_img_cmd(client, message):
+	"""send stupid quote image
+
+	Code comes from https://github.com/SamHDev/inspiro.
+	"""
+	msg = message
+	reply_to = message.id
+	if message.reply_to_message is not None:
+		msg = message.reply_to_message
+
+	quote = inspirobot.generate()  # Generate Image
+	# print(quote.url)  # Print the url
+	try:
+		await send_media(client, message.chat.id, quote.url, reply_to_message_id=reply_to)
+	except Exception as ex:
+		await edit_or_reply(message, "`[!] → ` " + str(ex))
