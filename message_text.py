@@ -46,7 +46,7 @@ async def transcribe2_cmd(client: alemiBot, message: Message):
 	msg = await edit_or_reply(message, "`→ ` Working...")
 	path = None
 	lang = message.command["lang"] or get_user(message).language_code or "en-US"
-	if message.reply_to_message and message.reply_to_message.voice:
+	if message.reply_to_message and message.reply_to_message.voice or message.reply_to_message.audio or (message.reply_to_message.document and message.command["whatsapp"]):
 		path = await client.download_media(message.reply_to_message)
 	elif message.voice or message.audio or (message.document and message.command["whatsapp"]):
 		path = await client.download_media(message)
