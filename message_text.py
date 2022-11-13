@@ -46,18 +46,18 @@ async def transcribe2_cmd(client: alemiBot, message: Message):
 	msg = await edit_or_reply(message, "`→ ` Working...")
 	path = None
 	lang = message.command["lang"] or get_user(message).language_code or "en-US"
-	if message.reply_to_message and message.reply_to_message.voice or message.reply_to_message.audio or (message.reply_to_message.document and message.command["whatsapp"]):
+	if message.reply_to_message and message.reply_to_message.voice or \
+			(message.reply_to_message.audio and message.command["whatsapp"]):
 		path = await client.download_media(message.reply_to_message)
-	elif message.voice or message.audio or (message.document and message.command["whatsapp"]):
+	elif message.voice or (message.audio and message.command["whatsapp"]):
 		path = await client.download_media(message)
 	else:
-		return await edit_or_reply(message, lang + " " + str(message.media))
-		# return await edit_or_reply(message, "`[!] → ` No audio given")
+		return await edit_or_reply(message, "`[!] → ` No audio given")
 	if message.command["whatsapp"]:
 		try:
-			sound = AudioSegment.from_file(path, codec="opus")
+			sound = AudioSegment.from_file(path, codec="opus").export("data/voice.wav", format="wav")
 		except:
-			sound = AudioSegment.from_file(path, codec="webm")
+			sound = AudioSegment.from_file(path, codec="webm").export("data/voice.wav", format="wav")
 	AudioSegment.from_ogg(path).export("data/voice.wav", format="wav")
 	os.remove(path)
 	voice = sr.AudioFile("data/voice.wav")
