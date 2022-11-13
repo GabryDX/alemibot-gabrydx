@@ -29,7 +29,7 @@ UClient = UrbanClient()
 
 @HELP.add(sudo=False)
 @alemiBot.on_message(is_allowed & filterCommand(["transcribe"], options={
-	"lang": ["-l", "-lang"], "whatsapp": ["-w", "-whatsapp"]
+	"lang": ["-l", "-lang"]
 }))
 @report_error(logger)
 @set_offline
@@ -46,20 +46,28 @@ async def transcribe2_cmd(client: alemiBot, message: Message):
 	msg = await edit_or_reply(message, "`→ ` Working...")
 	path = None
 	lang = message.command["lang"] or get_user(message).language_code or "en-US"
-	if message.reply_to_message and message.reply_to_message.voice or \
-			(message.reply_to_message.audio and message.command["whatsapp"]):
+	file_format = message.reply_to_message.audio.file_name or message.audio.file_name
+	if message.reply_to_message and (message.reply_to_message.voice or message.reply_to_message.audio):
 		path = await client.download_media(message.reply_to_message)
-	elif message.voice or (message.audio and message.command["whatsapp"]):
+	elif message.voice or message.audio:
 		path = await client.download_media(message)
 	else:
-		nnn = message.reply_to_message.audio.file_name
-		return await edit_or_reply(message, nnn)
-		# return await edit_or_reply(message, "`[!] → ` No audio given")
-	if message.command["whatsapp"]:
-		try:
-			AudioSegment.from_file(path, codec="opus").export("data/voice.wav", format="wav")
-		except:
-			AudioSegment.from_file(path, codec="webm").export("data/voice.wav", format="wav")
+		return await edit_or_reply(message, "`[!] → ` No audio given")
+	if file_format:
+		file_format = file_format.split(".")[-1].lower()
+		if file_format == "opus":
+			try:
+				AudioSegment.from_file(path, codec="opus").export("data/voice.wav", format="wav")
+			except:
+				AudioSegment.from_file(path, codec="webm").export("data/voice.wav", format="wav")
+		elif file_format == "mp3":
+			AudioSegment.from_mp3(path).export("data/voice.wav", format="wav")
+		elif file_format == "flv":
+			AudioSegment.from_wav(path).export("data/voice.wav", format="wav")
+		elif file_format == "ogg":
+			AudioSegment.from_ogg(path).export("data/voice.wav", format="wav")
+		elif file_format == "wav":
+			AudioSegment.from_wav(path).export("data/voice.wav", format="wav")
 	else:
 		AudioSegment.from_ogg(path).export("data/voice.wav", format="wav")
 	os.remove(path)
