@@ -45,6 +45,11 @@ async def brainyquote_cmd(client, message):
 	else:
 		quote = get_random_quote()
 
+	quote_list = quote.split("\n")
+	quote_text = quote_list[:-1]
+	quote_aut = quote_list[-1]
+	quote = quote_text + "\n\n__" + quote_aut + "__"
+
 	if quote:
 		await edit_or_reply(msg, quote)
 	else:
