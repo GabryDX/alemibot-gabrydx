@@ -10,7 +10,7 @@ from alemibot.util import (
 
 import logging
 
-from BrainyQuoteApi import get_random_quote, get_random_quote_author
+from .BrainyQuoteApi import get_random_quote, get_random_quote_author
 
 logger = logging.getLogger(__name__)
 
