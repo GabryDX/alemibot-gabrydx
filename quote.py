@@ -26,7 +26,8 @@ INTERRUPT = False
 @set_offline
 @cancel_chat_action
 async def brainyquote_cmd(client, message):
-	"""send quote message either random or chosen between a category or an author
+	"""send quote message either random or chosen
+	between a category or an author
 
 	quotes come from https://www.brainyquote.com/.
 	"""
@@ -46,9 +47,9 @@ async def brainyquote_cmd(client, message):
 		quote = get_random_quote()
 
 	quote_list = quote.split("\n")
-	quote_text = quote_list[:-1]
+	quote_text = "\n".join(quote_list[:-1])
 	quote_aut = quote_list[-1]
-	quote = quote_text + "\n\n__" + quote_aut + "__"
+	quote = quote_text.strip() + "\n\n__" + quote_aut + "__"
 
 	if quote:
 		await edit_or_reply(msg, quote)
