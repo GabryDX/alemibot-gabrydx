@@ -9,10 +9,46 @@ from alemibot.util import (
 )
 
 import logging
+
+from BrainyQuoteApi import get_random_quote, get_random_quote_author
+
 logger = logging.getLogger(__name__)
 
 HELP = HelpCategory("QUOTE")
 INTERRUPT = False
+
+
+@HELP.add(sudo=False)
+@alemiBot.on_message(is_allowed & filterCommand(["brainyquote"], options={
+	"topic": ["-t", "-topic"], "author": ["-a", "-author"]
+}))
+@report_error(logger)
+@set_offline
+@cancel_chat_action
+async def brainyquote_cmd(client, message):
+	"""send quote message either random or chosen between a category or an author
+
+	quotes come from https://www.brainyquote.com/.
+	"""
+	msg = message
+	reply_to = message.id
+	if message.reply_to_message is not None:
+		msg = message.reply_to_message
+
+	topic = message.command["topics"]
+	author = message.command["author"]
+
+	if topic:
+		quote = get_random_quote(topic)
+	elif author:
+		quote = get_random_quote_author(author)
+	else:
+		quote = get_random_quote()
+
+	if quote:
+		await edit_or_reply(msg, quote)
+	else:
+		await edit_or_reply(message, "`[!] → ` Something went wrong! Try Again!")
 
 
 @HELP.add(sudo=False)
@@ -21,7 +57,7 @@ INTERRUPT = False
 @set_offline
 @cancel_chat_action
 async def quote_cmd(client, message):
-	"""send stupid quote message
+	"""send random quote message
 
 	Code comes from https://geekflare.com/random-quote-python-code/ and
 	quotes come from https://quote-garden.herokuapp.com/api/v3/quotes/random.
@@ -44,9 +80,9 @@ async def quote_cmd(client, message):
 				quote += "\n\n__" + data[0]["quoteAuthor"] + "__"
 			await edit_or_reply(msg, quote)
 		else:
-			return await edit_or_reply(message, "`[!] → ` Error while getting quote")
+			await edit_or_reply(message, "`[!] → ` Error while getting quote")
 	except:
-		return await edit_or_reply(message, "`[!] → ` Something went wrong! Try Again!")
+		await edit_or_reply(message, "`[!] → ` Something went wrong! Try Again!")
 
 
 @HELP.add(sudo=False)
