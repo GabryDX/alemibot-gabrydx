@@ -26,6 +26,8 @@ recognizer = sr.Recognizer()
 dictionary = PyDictionary()
 UClient = UrbanClient()
 
+ERROR_MESSAGE = "<code>[!] → </code> "
+
 
 @HELP.add(sudo=False)
 @alemiBot.on_message(is_allowed & filterCommand(["transcribe"], options={
@@ -43,7 +45,7 @@ async def transcribe2_cmd(client: alemiBot, message: Message):
 	You can specify speech recognition language with `-l` (using `RFC5646` language tag format :`en-US`, `it-IT`, ...)
 	"""
 	await client.send_chat_action(message.chat.id, ChatAction.RECORD_AUDIO)
-	msg = await edit_or_reply(message, "`→ ` Working...")
+	msg = await edit_or_reply(message, "<code>→ </code> Working...")
 	path = None
 	lang = message.command["lang"] or get_user(message).language_code or "en-US"
 	file_format = message.reply_to_message.audio.file_name or message.audio.file_name
@@ -52,7 +54,7 @@ async def transcribe2_cmd(client: alemiBot, message: Message):
 	elif message.voice or message.audio:
 		path = await client.download_media(message)
 	else:
-		return await edit_or_reply(message, "`[!] → ` No audio given")
+		return await edit_or_reply(message, ERROR_MESSAGE + " No audio given")
 	if file_format:
 		file_format = file_format.split(".")[-1].lower()
 		if file_format == "opus":
@@ -74,6 +76,6 @@ async def transcribe2_cmd(client: alemiBot, message: Message):
 	voice = sr.AudioFile("data/voice.wav")
 	with voice as source:
 		audio = recognizer.record(source)
-	out = "` → `" + recognizer.recognize_google(audio, language=lang,
+	out = "<code> → </code>" + recognizer.recognize_google(audio, language=lang,
 						key=client.config.get("transcribe", "key", fallback=None))
 	await edit_or_reply(msg, out)

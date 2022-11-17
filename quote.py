@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 HELP = HelpCategory("QUOTE")
 INTERRUPT = False
+ERROR_MESSAGE = "<code>[!] → </code> "
 
 
 @HELP.add(sudo=False)
@@ -50,13 +51,13 @@ async def brainyquote_cmd(client, message):
 	quote_text = ("\n".join(quote_list[:-1])).strip()
 	quote_aut = quote_list[-1].strip()
 	if quote_text and quote_aut:
-		quote = quote_text + "\n\n__" + quote_aut + "__"
+		quote = quote_text + "\n\n<i>" + quote_aut + "</i>"
 	quote = quote.strip()
 
 	if quote:
 		await edit_or_reply(msg, quote)
 	else:
-		await edit_or_reply(message, "`[!] → ` Something went wrong! Try Again!")
+		await edit_or_reply(message, ERROR_MESSAGE + "Something went wrong! Try Again!")
 
 
 @HELP.add(sudo=False)
@@ -85,12 +86,12 @@ async def quote_cmd(client, message):
 			# getting the quote from the data
 			quote = data[0]['quoteText']
 			if "quoteAuthor" in data[0]:
-				quote += "\n\n__" + data[0]["quoteAuthor"] + "__"
+				quote += "\n\n<i>" + data[0]["quoteAuthor"] + "</i>"
 			await edit_or_reply(msg, quote)
 		else:
-			await edit_or_reply(message, "`[!] → ` Error while getting quote")
+			await edit_or_reply(message, ERROR_MESSAGE + "Error while getting quote")
 	except:
-		await edit_or_reply(message, "`[!] → ` Something went wrong! Try Again!")
+		await edit_or_reply(message, ERROR_MESSAGE + "Something went wrong! Try Again!")
 
 
 @HELP.add(sudo=False)
@@ -113,4 +114,4 @@ async def quote_img_cmd(client, message):
 	try:
 		await send_media(client, message.chat.id, quote.url, reply_to_message_id=reply_to)
 	except Exception as ex:
-		await edit_or_reply(message, "`[!] → ` " + str(ex))
+		await edit_or_reply(message, ERROR_MESSAGE + str(ex))
